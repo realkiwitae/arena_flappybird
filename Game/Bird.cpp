@@ -46,3 +46,7 @@ void Bird::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint u
 //	shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 	model_bird->RenderModel();
 }
+
+void Bird::kill(){
+    pos = glm::vec2(game_bird_x,0);
+}

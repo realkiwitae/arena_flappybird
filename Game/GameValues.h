@@ -6,7 +6,7 @@
 #define game_gravity -9.807f
 #define game_arena_floor_y -4.f
 #define game_arena_ceiling_y 4.f
-#define game_arena_pipe_speed -3.f
+#define game_arena_pipe_speed -1.f
 #define game_arena_pipe_gap 2.f
 #define game_arena_pipe_distance 3.f
 #define game_arena_pipe_model_z 10.2f

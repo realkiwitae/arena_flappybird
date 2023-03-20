@@ -221,6 +221,9 @@ void GameLoop(){
 	bird.setbUp(CHECK_BIT(*mainWindow.getKeys(),GLFW_KEY_SPACE));
 	bird.update();
 	arena.update();
+	
+	//check collisions
+	arena.checkCollision(&bird);
 }
 
 int main() 

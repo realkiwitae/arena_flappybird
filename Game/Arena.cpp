@@ -38,7 +38,7 @@ void Arena::update()
 void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess)
 {
     glm::mat4 model(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, game_arena_floor_y + .5f, 0.0f));
+	model = glm::translate(model, glm::vec3(0.0f, game_arena_floor_y + .8f, 0.0f));
 	model = glm::scale(model, glm::vec3(1.f, 1.f, 10.f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	//dirtTexture.UseTexture();
@@ -46,7 +46,7 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 	ground.RenderModel();
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, game_arena_ceiling_y+1.f+0.302665f, 0.0f));
+	model = glm::translate(model, glm::vec3(0.0f, game_arena_ceiling_y+1.f, 0.0f));
 	model = glm::scale(model, glm::vec3(1.f, 1.f, 10.f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	//dirtTexture.UseTexture();
@@ -55,5 +55,20 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
         pipes[i].render(uniformModel, uniformSpecularIntensity, uniformShininess);
+    }
+}
+
+void Arena::checkCollision(Bird* b){
+    glm::vec2 bird_pos = b->getPos();
+    if(fabs(bird_pos.y-game_arena_floor_y) < b->getCollisionH()/2.f){
+        b->kill();
+        return;
+    }
+    if(fabs(bird_pos.y-game_arena_ceiling_y) < b->getCollisionH()/2.f){
+        b->kill();
+        return;
+    }
+    for(Pipe& p : pipes){
+        p.checkCollision(b);
     }
 }

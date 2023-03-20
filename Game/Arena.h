@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "./Bird.h"
 #include "./GameValues.h"
 #include "./Pipe.h"
 
@@ -17,6 +18,7 @@ public:
     void init();
     void update();
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
+    void checkCollision(Bird* b);
 private:
     Pipe pipes[game_arena_nb_pipes]; 
     Model ground;
