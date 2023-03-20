@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-extern GLfloat deltaTime;
+extern GLfloat deltaTime,now;
 
 Bird::Bird()
 {
@@ -23,6 +23,7 @@ Bird::~Bird()
 
 void Bird::init()
 {
+    birth = now;
     pos.x = game_bird_x;
     model_bird = new Model();
 	model_bird->LoadModel("flappy/bird");
@@ -47,6 +48,12 @@ void Bird::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint u
 	model_bird->RenderModel();
 }
 
-void Bird::kill(){
-    pos = glm::vec2(game_bird_x,0);
+void Bird::kill(GLfloat y){
+    pos = glm::vec2(game_bird_x,y);
+
+    if(fitness < now - birth){
+        fitness = now - birth;
+        std::cout << "Bird " << fitness << std::endl;
+    }
+    birth = now;
 }

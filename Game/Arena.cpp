@@ -61,11 +61,11 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 void Arena::checkCollision(Bird* b){
     glm::vec2 bird_pos = b->getPos();
     if(fabs(bird_pos.y-game_arena_floor_y) < b->getCollisionH()/2.f){
-        b->kill();
+        b->kill(0.f);
         return;
     }
     if(fabs(bird_pos.y-game_arena_ceiling_y) < b->getCollisionH()/2.f){
-        b->kill();
+        b->kill(0.f);
         return;
     }
     for(Pipe& p : pipes){

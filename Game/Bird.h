@@ -20,7 +20,7 @@ public:
     void update();
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
     void setbUp(bool val){bUp = val;}
-    void kill();
+    void kill(GLfloat y);
     glm::vec2 getPos(){return pos;}
     GLfloat getCollisionW(){return collision_w;}
     GLfloat getCollisionH(){return collision_h;}
@@ -34,6 +34,8 @@ private:
     GLfloat collision_w = 1.f;
     GLfloat collision_h = .5f;
     bool bUp = false;
+    GLfloat fitness = 0.f;
+    GLfloat birth = 0.f;
 };
 
 #endif
