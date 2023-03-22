@@ -10,6 +10,9 @@
 
 #include "./GameValues.h"
 
+#include "../kiwinn/DNA.hpp"
+#include "../kiwinn/NeuralNetwork.hpp"
+
 class Bird
 {
 public:
@@ -24,6 +27,9 @@ public:
     glm::vec2 getPos(){return pos;}
     GLfloat getCollisionW(){return collision_w;}
     GLfloat getCollisionH(){return collision_h;}
+
+    void possess(DNA* dna);
+
 private:
     Model* model_bird;
     //Physics
@@ -36,6 +42,10 @@ private:
     bool bUp = false;
     GLfloat fitness = 0.f;
     GLfloat birth = 0.f;
+
+    bool bIsAI = false;
+    DNA* flappy_dna;
+    NeuralNetwork* flappy_nn = nullptr;
 };
 
 #endif

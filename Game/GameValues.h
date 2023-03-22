@@ -15,5 +15,8 @@
 #define game_arena_left -4.f
 #define game_bird_x -3.5
 
+#define game_flappynn_nb_layers 4
+#define game_flappynn_data_size 12
+#define game_flappynn_pool_size 200
 
 #endif

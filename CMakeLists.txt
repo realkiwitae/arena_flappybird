@@ -35,6 +35,13 @@ SET(SOURCE_FILES
 	./Game/Bird.cpp
 	./Game/Camera.cpp
 	./Game/Pipe.cpp
+
+	./kiwinn/DNA.cpp
+	./kiwinn/GeneticPool.cpp
+	./kiwinn/NeuralNetwork.cpp
+	./kiwinn/Stage.cpp
+	./kiwinn/utils.cpp
+	
 	)
 	
 ADD_EXECUTABLE(project ${SOURCE_FILES})

@@ -35,6 +35,8 @@
 #include "./Game/Camera.h"
 #include "./Game/GameValues.h"
 
+#include "./kiwinn/GeneticPool.h"
+
 extern GLfloat now,deltaTime,lastTime;
 
 GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
@@ -55,7 +57,9 @@ Texture plainTexture;
 Material shinyMaterial;
 Material dullMaterial;
 
-Bird bird;
+//Bird bird;
+Bird birdNNs[game_flappynn_pool_size];
+GeneticPool genom;
 Arena arena;
 
 DirectionalLight mainLight;
@@ -103,7 +107,14 @@ void calcAverageNormals(unsigned int * indices, unsigned int indiceCount, GLfloa
 
 void CreateObjects() 
 {
-	bird.init();
+	genom.init(game_flappynn_pool_size, game_flappynn_data_size);
+
+	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+	{
+		birdNNs[i] = Bird();
+		birdNNs[i].init();
+		birdNNs[i].possess(genom.getDNA(i));
+	}
 	arena.init();
 }
 
@@ -123,8 +134,10 @@ void RenderScene()
 {
 
 	arena.render(uniformModel,uniformSpecularIntensity,uniformShininess);
-
-	bird.render(uniformModel,uniformSpecularIntensity,uniformShininess);
+	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+	{
+		birdNNs[i].render(uniformModel,uniformSpecularIntensity,uniformShininess);
+	}
 }
 
 void DirectionalShadowMapPass(DirectionalLight* light)
@@ -218,12 +231,21 @@ void GameLoop(){
 		mainWindow.Toggle(GLFW_KEY_L);
 	}
 
-	bird.setbUp(CHECK_BIT(*mainWindow.getKeys(),GLFW_KEY_SPACE));
-	bird.update();
+	//bird.setbUp(CHECK_BIT(*mainWindow.getKeys(),GLFW_KEY_SPACE));
+	
+	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+	{
+		birdNNs[i].update();
+	}
+	
 	arena.update();
 	
 	//check collisions
-	arena.checkCollision(&bird);
+
+	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+	{
+		arena.checkCollision(&birdNNs[i]);
+	}
 }
 
 int main() 

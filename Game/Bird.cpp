@@ -27,10 +27,19 @@ void Bird::init()
     pos.x = game_bird_x;
     model_bird = new Model();
 	model_bird->LoadModel("flappy/bird");
+
 }
 
 void Bird::update(){
     GLfloat gravityForce = game_gravity * mass;
+    double inputs[3] = {};
+
+    flappy_nn->calc(inputs);
+
+    double* out = flappy_nn->getOutput();
+
+    bUp = out[0];
+
     speed = glm::clamp(!bUp*(fabs(pos.y-game_arena_ceiling_y)>0.001)*speed + bUp*glm::max(speed,0.f) + (1-2*bUp)*gravityForce*deltaTime, -maxspeed, maxspeed);
     pos.y += speed*deltaTime;
 
@@ -56,4 +65,12 @@ void Bird::kill(GLfloat y){
         std::cout << "Bird " << fitness << std::endl;
     }
     birth = now;
+}
+
+void Bird::possess(DNA* dna){
+    bIsAI = true;
+    flappy_dna = dna;
+    int stage_l[game_flappynn_nb_layers] = {3, 4, 4, 1};
+    if(!flappy_nn)flappy_nn = new NeuralNetwork(stage_l, game_flappynn_nb_layers);
+    flappy_nn->loadCoeffs(dna->data);
 }
