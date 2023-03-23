@@ -15,11 +15,13 @@ public:
     Pipe();
     Pipe(int _id):id(_id){}
     ~Pipe();
-    void init();
+    void init(Model* pipe);
     void update();
     void teleport();
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
     void checkCollision(Bird* b);
+    glm::vec2 getPos(){return pos;}
+    glm::vec2 getGap(){return glm::vec2(pos.x,gap);}
 private:
     glm::vec2 pos = glm::vec2(5,0);
     GLfloat size_pipe_top;

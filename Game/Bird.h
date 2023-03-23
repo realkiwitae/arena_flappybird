@@ -19,11 +19,12 @@ public:
     Bird();
     ~Bird();
 
-    void init();
-    void update();
+    void init(Model* model);
+    void update(glm::vec2 inc_gap);
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
     void setbUp(bool val){bUp = val;}
     void kill(GLfloat y);
+    bool isDead(){return !bIsAlive;}
     glm::vec2 getPos(){return pos;}
     GLfloat getCollisionW(){return collision_w;}
     GLfloat getCollisionH(){return collision_h;}
@@ -40,7 +41,7 @@ private:
     GLfloat collision_w = 1.f;
     GLfloat collision_h = .5f;
     bool bUp = false;
-    GLfloat fitness = 0.f;
+    bool bIsAlive = true;
     GLfloat birth = 0.f;
 
     bool bIsAI = false;

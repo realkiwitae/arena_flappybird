@@ -16,22 +16,35 @@ Arena::~Arena()
 }
 
 void Arena::init()
-{
+{   
+    if(!pipe){
+        pipe = new Model();
+        pipe->LoadModel("flappy/pipe");
+    }
+
+    incoming_pipe_id = 0;
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
         pipes[i] = Pipe(i);
-        pipes[i].init();
+        pipes[i].init(pipe);
     }
   
-	ground = Model();
-	ground.LoadModel("flappy/ground");
-	ceiling = Model();
-	ceiling.LoadModel("flappy/ground");
+    if(!ground){
+        ground = new Model();
+        ground->LoadModel("flappy/ground");
+    }
+    if(!ceiling){
+        ceiling = new Model();
+        ceiling->LoadModel("flappy/ground");
+    }
 }
 
 void Arena::update()
 {
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
         pipes[i].update();
+        if(pipes[i].getPos().x < game_bird_x - game_bird_collison_w/2.f){
+            incoming_pipe_id = (incoming_pipe_id+1)%game_arena_nb_pipes;
+        }
     }
 }
 
@@ -43,7 +56,7 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	//dirtTexture.UseTexture();
 	//shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-	ground.RenderModel();
+	ground->RenderModel();
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, game_arena_ceiling_y+1.f, 0.0f));
@@ -51,7 +64,7 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	//dirtTexture.UseTexture();
 	//dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-    ceiling.RenderModel();
+    ceiling->RenderModel();
 
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
         pipes[i].render(uniformModel, uniformSpecularIntensity, uniformShininess);
@@ -59,6 +72,7 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 }
 
 void Arena::checkCollision(Bird* b){
+    if(b->isDead())return;
     glm::vec2 bird_pos = b->getPos();
     if(fabs(bird_pos.y-game_arena_floor_y) < b->getCollisionH()/2.f){
         b->kill(0.f);

@@ -13,10 +13,11 @@
 #define game_arena_nb_pipes 6
 #define game_arena_width 10.f
 #define game_arena_left -4.f
-#define game_bird_x -3.5
+#define game_bird_x -3.5f
+#define game_bird_collison_w .5f
 
 #define game_flappynn_nb_layers 4
-#define game_flappynn_data_size 12
-#define game_flappynn_pool_size 200
+#define game_flappynn_data_size 32
+#define game_flappynn_pool_size 1000
 
 #endif

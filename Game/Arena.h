@@ -19,11 +19,13 @@ public:
     void update();
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
     void checkCollision(Bird* b);
+    glm::vec2 getIncGap(){return pipes[incoming_pipe_id].getGap();}
 private:
     Pipe pipes[game_arena_nb_pipes]; 
-    Model ground;
-    Model ceiling;
-
+    Model* ground;
+    Model* ceiling;
+    Model* pipe;
+    int incoming_pipe_id;
 };
 
 #endif

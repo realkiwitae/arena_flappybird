@@ -1,5 +1,6 @@
 #include "Model.h"
 #include <iostream>
+#include <map>
 
 Model::Model()
 {
@@ -35,6 +36,7 @@ void Model::LoadModel(const std::string & fileName)
 	LoadNode(scene->mRootNode, scene);
 
 	LoadMaterials(scene);
+
 }
 
 void Model::LoadNode(aiNode * node, const aiScene * scene)

@@ -58,6 +58,8 @@ Material shinyMaterial;
 Material dullMaterial;
 
 //Bird bird;
+Model* model_bird;
+
 Bird birdNNs[game_flappynn_pool_size];
 GeneticPool genom;
 Arena arena;
@@ -109,10 +111,13 @@ void CreateObjects()
 {
 	genom.init(game_flappynn_pool_size, game_flappynn_data_size);
 
+	model_bird = new Model();
+	model_bird->LoadModel("flappy/bird");
+
 	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
 	{
 		birdNNs[i] = Bird();
-		birdNNs[i].init();
+		birdNNs[i].init(model_bird);
 		birdNNs[i].possess(genom.getDNA(i));
 	}
 	arena.init();
@@ -233,18 +238,30 @@ void GameLoop(){
 
 	//bird.setbUp(CHECK_BIT(*mainWindow.getKeys(),GLFW_KEY_SPACE));
 	
-	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
-	{
-		birdNNs[i].update();
-	}
-	
 	arena.update();
-	
-	//check collisions
 
 	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
 	{
+		birdNNs[i].update(arena.getIncGap());
+
+	}
+
+	//check collisions
+	int nb_alive = 0;
+	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+	{
 		arena.checkCollision(&birdNNs[i]);
+		nb_alive+=!birdNNs[i].isDead();
+	}
+
+	if(nb_alive < 1){
+		genom.breed();
+		for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+		{
+			birdNNs[i].init(model_bird);
+			birdNNs[i].possess(genom.getDNA(i));
+		}
+		arena.init();
 	}
 }
 

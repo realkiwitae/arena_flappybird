@@ -20,14 +20,12 @@ Pipe::~Pipe()
 
 }
 
-void Pipe::init()
+void Pipe::init(Model* model)
 {
-    model_pipe_bottom = new Model();
-	model_pipe_bottom->LoadModel("flappy/pipe");
-    model_pipe_top = new Model();
-	model_pipe_top->LoadModel("flappy/pipe");
+    model_pipe_bottom = model;
+    model_pipe_top = model;
 
-    pos.x += game_arena_left + game_arena_width + id*game_arena_pipe_distance;
+    pos.x += game_arena_left + game_arena_width/2.f + id*game_arena_pipe_distance;
     teleport();
 }
 
