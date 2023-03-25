@@ -4,6 +4,8 @@
 #include <string.h>
 #include <cmath>
 #include <vector>
+#include <chrono>
+#include <unistd.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -86,6 +88,7 @@ static const char* fShader = "Shaders/shader.frag";
 
 // Video output settings
 const int FPS = 30; // Frames per second
+const int SLEEP_TIME = 1000000/FPS;
 const int FOURCC = cv::VideoWriter::fourcc('H','2','6','4'); // Codec to use
 
 GLubyte* image = new GLubyte[WIDTH * HEIGHT * 3];
@@ -398,6 +401,9 @@ int main()
 		mainWindow.swapBuffers();
 	        // Write the frame to the video file
 		captureFrame();
+
+		int us = SLEEP_TIME - (glfwGetTime()-now)*1e6;
+        if(us>0)usleep(us);
 	}
 
 	return 0;
