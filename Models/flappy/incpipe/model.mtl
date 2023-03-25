@@ -1,0 +1,13 @@
+# Blender MTL File: 'Bird-Floppy.blend'
+# Material Count: 1
+
+newmtl Pipa
+Ns 2.777780
+Ka 0.652778 0.652778 0.652778
+Kd 0.007165 0.358840 0.000000
+Ks 0.361111 0.361111 0.361111
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd 1200x-14.jpg

@@ -143,6 +143,7 @@ void RenderScene()
 	{
 		birdNNs[i].render(uniformModel,uniformSpecularIntensity,uniformShininess);
 	}
+
 }
 
 void DirectionalShadowMapPass(DirectionalLight* light)
@@ -238,7 +239,12 @@ void GameLoop(){
 
 	//bird.setbUp(CHECK_BIT(*mainWindow.getKeys(),GLFW_KEY_SPACE));
 	
-	arena.update();
+	if(arena.update()){
+		for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
+		{
+			birdNNs[i].addScore(1.f);
+		}
+	}
 
 	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
 	{

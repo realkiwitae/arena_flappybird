@@ -15,8 +15,8 @@ public:
     Pipe();
     Pipe(int _id):id(_id){}
     ~Pipe();
-    void init(Model* pipe);
-    void update();
+    void init(Model* _pipe,Model* _incpipe);
+    void update(int incid);
     void teleport();
     void render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess);
     void checkCollision(Bird* b);
@@ -26,10 +26,11 @@ private:
     glm::vec2 pos = glm::vec2(5,0);
     GLfloat size_pipe_top;
     GLfloat size_pipe_bottom;   
-    Model* model_pipe_top;
-    Model* model_pipe_bottom;
+    Model* pipe;
+    Model* incpipe;
     GLfloat gap; 
     int id = 0;
+    int incid = 0;
     GLfloat speed = 0.f;
     GLfloat collision_w = .2f;
 };

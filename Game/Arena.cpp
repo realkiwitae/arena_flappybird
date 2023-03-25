@@ -17,17 +17,26 @@ Arena::~Arena()
 
 void Arena::init()
 {   
+    if(!brickTexture){
+        brickTexture = new Texture("Textures/brick.png");
+        brickTexture->LoadTextureA();
+    }
+
     if(!pipe){
         pipe = new Model();
         pipe->LoadModel("flappy/pipe");
+    }
+    if(!incpipe){
+        incpipe = new Model();
+        incpipe->LoadModel("flappy/incpipe");
     }
 
     incoming_pipe_id = 0;
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
         pipes[i] = Pipe(i);
-        pipes[i].init(pipe);
+        pipes[i].init(pipe,incpipe);
     }
-  
+
     if(!ground){
         ground = new Model();
         ground->LoadModel("flappy/ground");
@@ -38,14 +47,19 @@ void Arena::init()
     }
 }
 
-void Arena::update()
+bool Arena::update()
 {
+    bool b = false;
     for(size_t i = 0; i < game_arena_nb_pipes; i++){
-        pipes[i].update();
-        if(pipes[i].getPos().x < game_bird_x - game_bird_collison_w/2.f){
+        pipes[i].update(incoming_pipe_id);
+        if(i == incoming_pipe_id
+            &&pipes[i].getPos().x < game_bird_x - game_bird_collison_w/2.f)
+        {
             incoming_pipe_id = (incoming_pipe_id+1)%game_arena_nb_pipes;
+            b = true;
         }
     }
+    return b;
 }
 
 void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint uniformShininess)
@@ -74,14 +88,14 @@ void Arena::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint 
 void Arena::checkCollision(Bird* b){
     if(b->isDead())return;
     glm::vec2 bird_pos = b->getPos();
-    if(fabs(bird_pos.y-game_arena_floor_y) < b->getCollisionH()/2.f){
-        b->kill(0.f);
-        return;
-    }
-    if(fabs(bird_pos.y-game_arena_ceiling_y) < b->getCollisionH()/2.f){
-        b->kill(0.f);
-        return;
-    }
+    // if(fabs(bird_pos.y-game_arena_floor_y) < b->getCollisionH()/2.f){
+    //     b->kill(0.f);
+    //     return;
+    // }
+    // if(fabs(bird_pos.y-game_arena_ceiling_y) < b->getCollisionH()/2.f){
+    //     b->kill(0.f);
+    //     return;
+    // }
     for(Pipe& p : pipes){
         p.checkCollision(b);
     }

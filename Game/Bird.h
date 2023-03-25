@@ -30,7 +30,7 @@ public:
     GLfloat getCollisionH(){return collision_h;}
 
     void possess(DNA* dna);
-
+    void addScore(GLfloat s);
 private:
     Model* model_bird;
     //Physics
@@ -43,7 +43,7 @@ private:
     bool bUp = false;
     bool bIsAlive = true;
     GLfloat birth = 0.f;
-
+    GLfloat score = 0.f;
     bool bIsAI = false;
     DNA* flappy_dna;
     NeuralNetwork* flappy_nn = nullptr;

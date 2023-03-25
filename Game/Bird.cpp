@@ -26,7 +26,7 @@ void Bird::init(Model* model)
     birth = now;
     pos.x = game_bird_x;
     model_bird = model;
-
+    score = 0.f;
     bIsAlive = true;
 }
 
@@ -36,9 +36,11 @@ void Bird::update(glm::vec2 inc_gap){
     }
     GLfloat gravityForce = game_gravity * mass;
     double inputs[3] = {
-        fabs(game_arena_ceiling_y - pos.y + collision_h/2.f),
-        fabs(pos.y - collision_h/2.f - game_arena_floor_y),
-        glm::distance(inc_gap , pos)
+  //      fabs(game_arena_ceiling_y - pos.y + collision_h/2.f),
+//        fabs(pos.y - collision_h/2.f - game_arena_floor_y),
+        fabs(inc_gap.x - pos.x),
+        fabs(inc_gap.y + game_arena_pipe_gap/2 - pos.y),
+        fabs(inc_gap.y - game_arena_pipe_gap/2 - pos.y),
         };
 
     flappy_nn->calc(inputs);
@@ -68,13 +70,15 @@ void Bird::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint u
 
 void Bird::kill(GLfloat y){
 
-    pos = glm::vec2(game_bird_x,y);
 
-    if(flappy_dna->fitness < now - birth){
-        flappy_dna->fitness = now - birth;
+
+    if(flappy_dna->fitness < score){
+        flappy_dna->fitness = score - fabs(y - pos.y)/(game_arena_ceiling_y-game_arena_floor_y);
         //std::cout << "Bird " << fitness << std::endl;
+    }else{
+        flappy_dna->fitness =   ((score) + 2*flappy_dna->fitness)/3.f;
     }
-    birth = now;
+    pos = glm::vec2(game_bird_x,y);
     bIsAlive = false;
 
 }
@@ -82,7 +86,12 @@ void Bird::kill(GLfloat y){
 void Bird::possess(DNA* dna){
     bIsAI = true;
     flappy_dna = dna;
-    int stage_l[game_flappynn_nb_layers] = {3, 4, 4, 1};
+    int stage_l[game_flappynn_nb_layers] = {3, 6, 1};
     if(!flappy_nn)flappy_nn = new NeuralNetwork(stage_l, game_flappynn_nb_layers);
     flappy_nn->loadCoeffs(dna->data);
+}
+
+void Bird::addScore(GLfloat s){
+    if(!bIsAlive)return;
+    score += s;
 }
