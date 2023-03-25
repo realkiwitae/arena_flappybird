@@ -34,7 +34,7 @@ void Bird::update(glm::vec2 inc_gap){
     if(!bIsAlive){
         return;
     }
-    if(now-birth > 60.f){
+    if(now-birth > 20.f){
         kill(inc_gap.y);
         return;
     }

@@ -36,3 +36,5 @@ build/
 .vscode/settings.json
 
 *.dbg
+
+media/

@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 
+#include <opencv2/opencv.hpp>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -38,6 +40,9 @@
 #include "./kiwinn/GeneticPool.h"
 
 extern GLfloat now,deltaTime,lastTime;
+
+GLuint WIDTH = 1366;
+GLuint HEIGHT = 768;
 
 GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
 uniformSpecularIntensity = 0, uniformShininess = 0, uniformOmniLightPos = 0, uniformFarPlane = 0;
@@ -78,6 +83,26 @@ static const char* vShader = "Shaders/shader.vert";
 
 // Fragment Shader
 static const char* fShader = "Shaders/shader.frag";
+
+// Video output settings
+const int FPS = 30; // Frames per second
+const int FOURCC = cv::VideoWriter::fourcc('H','2','6','4'); // Codec to use
+
+GLubyte* image = new GLubyte[WIDTH * HEIGHT * 3];
+cv::VideoWriter writer;
+
+// Function to capture a frame from the OpenGL window
+void captureFrame() {
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(0, 0, WIDTH, HEIGHT, GL_BGR_EXT, GL_UNSIGNED_BYTE , image);
+
+   // glReadPixels(0, 0, WIDTH, HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, image);
+	cv::Mat frame(cv::Size(WIDTH, HEIGHT), CV_8UC3, image);
+	//cv::InputArray inputArray(frame);
+	cv::flip(frame,frame,0);
+	writer.write(frame);
+}
+
 
 void calcAverageNormals(unsigned int * indices, unsigned int indiceCount, GLfloat * vertices, unsigned int verticeCount, 
 						unsigned int vLength, unsigned int normalOffset)
@@ -189,7 +214,7 @@ void OmniShadowMapPass(PointLight* light)
 
 void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 {
-	glViewport(0, 0, 1366, 768);
+	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Clear the window
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -273,13 +298,19 @@ void GameLoop(){
 
 int main() 
 {
-	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
+
+	mainWindow = Window(WIDTH, HEIGHT); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
+
+    // Initialize OpenCV video writer
+    writer.open("./media/output.mkv", FOURCC, FPS, cv::Size(WIDTH, HEIGHT), true);
+    // writer.set(cv::VIDEOWRITER_PROP_QUALITY, 1.0);
+    // writer.set(cv::VIDEOWRITER_PROP_QUALITY, 1.0);
 
 	CreateObjects();
 	CreateShaders();
 
-	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 30.f, 0.0f, 0.f, 0.f);
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 30.f, 0.0f, 0.0f, 0.0f);
 
 	brickTexture = Texture("Textures/brick.png");
 	brickTexture.LoadTextureA();
@@ -365,6 +396,8 @@ int main()
 		glUseProgram(0);
 
 		mainWindow.swapBuffers();
+	        // Write the frame to the video file
+		captureFrame();
 	}
 
 	return 0;
