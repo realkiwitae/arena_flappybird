@@ -80,7 +80,7 @@ void Pipe::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint u
 void Pipe::checkCollision(Bird* b){
     glm::vec2 bird_pos = b->getPos();
 
-    if(fabs(bird_pos.x - pos.x) < collision_w/2.f && fabs(bird_pos.y - gap) > game_arena_pipe_gap - b->getCollisionH()/2.f){
+    if(fabs(bird_pos.x - pos.x) < collision_w/2.f && fabs(bird_pos.y - gap) > game_arena_pipe_gap/2.f - b->getCollisionH()/2.f){
         b->kill(gap);
     }
 }

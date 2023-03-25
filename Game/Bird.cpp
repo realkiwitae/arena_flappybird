@@ -34,6 +34,10 @@ void Bird::update(glm::vec2 inc_gap){
     if(!bIsAlive){
         return;
     }
+    if(now-birth > 60.f){
+        kill(inc_gap.y);
+        return;
+    }
     GLfloat gravityForce = game_gravity * mass;
     double inputs[3] = {
   //      fabs(game_arena_ceiling_y - pos.y + collision_h/2.f),
@@ -48,10 +52,10 @@ void Bird::update(glm::vec2 inc_gap){
     double* out = flappy_nn->getOutput();
     bUp = out[0] > .05f;
 
-    speed = glm::clamp(!bUp*(fabs(pos.y-game_arena_ceiling_y)>0.001)*speed + bUp*glm::max(speed,0.f) + (1-2*bUp)*gravityForce*deltaTime, -maxspeed, maxspeed);
+    speed = glm::clamp(!bUp*(fabs(pos.y-collision_h/2.f-game_arena_ceiling_y)>0.001)*speed + bUp*glm::max(speed,0.f) + (1-2*bUp)*gravityForce*deltaTime, -maxspeed, maxspeed);
     pos.y += speed*deltaTime;
 
-    pos.y = glm::clamp(pos.y,game_arena_floor_y,game_arena_ceiling_y);
+    pos.y = glm::clamp(pos.y,game_arena_floor_y+collision_h/2.f,game_arena_ceiling_y-collision_h/2.f);
   //  std::cout << pos.y << std::endl;
 }
 
@@ -69,8 +73,6 @@ void Bird::render(GLuint uniformModel, GLuint uniformSpecularIntensity, GLuint u
 }
 
 void Bird::kill(GLfloat y){
-
-
 
     if(flappy_dna->fitness < score){
         flappy_dna->fitness = score - fabs(y - pos.y)/(game_arena_ceiling_y-game_arena_floor_y);
