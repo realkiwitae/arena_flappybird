@@ -6,6 +6,7 @@
 #include <vector>
 #include <chrono>
 #include <unistd.h>
+#include <sstream>
 
 #include <opencv2/opencv.hpp>
 
@@ -69,6 +70,7 @@ Model* model_bird;
 
 Bird birdNNs[game_flappynn_pool_size];
 GeneticPool genom;
+int nb_alive = 0;
 Arena arena;
 
 DirectionalLight mainLight;
@@ -103,6 +105,30 @@ void captureFrame() {
 	cv::Mat frame(cv::Size(WIDTH, HEIGHT), CV_8UC3, image);
 	//cv::InputArray inputArray(frame);
 	cv::flip(frame,frame,0);
+
+    // Write text on the image
+    int font = cv::FONT_HERSHEY_SIMPLEX;
+    double font_scale = .5;
+    int thickness = 2;
+    cv::Scalar color(255, 255, 255);  // white color
+
+    std::string text = "Neuro-evolution - flappybird arena";
+    cv::Size text_size = cv::getTextSize(text, font, font_scale, thickness, nullptr);
+    int text_x = (frame.cols - text_size.width) / 2;
+    int text_y = (text_size.height + text_size.height ) / 2;
+    cv::putText(frame, text, cv::Point(text_x, text_y), font, font_scale, color, thickness);
+
+	std::stringstream survivalrate;
+	survivalrate << std::fixed << std::setprecision(2) << nb_alive*100.f/game_flappynn_pool_size;
+	text = "Gen: "+std::to_string(genom.getGen())+" - survivors: "+ survivalrate.str()+"%";
+	text_size = cv::getTextSize(text, font, font_scale, thickness, nullptr);
+    text_x = 100;
+    text_y = frame.rows - text_size.height/ 2;
+    cv::putText(frame, text, cv::Point(text_x, text_y), font, font_scale, color, thickness);
+
+
+
+
 	writer.write(frame);
 }
 
@@ -281,7 +307,7 @@ void GameLoop(){
 	}
 
 	//check collisions
-	int nb_alive = 0;
+	nb_alive = 0;
 	for(size_t i = 0 ; i < game_flappynn_pool_size; i++)
 	{
 		arena.checkCollision(&birdNNs[i]);
